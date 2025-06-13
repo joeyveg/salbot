@@ -7,30 +7,42 @@ st.set_page_config(page_title="SalBot - The Feisty Chatbot", layout="wide")
 
 custom_css = """
 <style>
-    .main {
-        background-color: #0e1117;
-        color: #f5f5f5;
-        font-family: 'Courier New', monospace;
+    html, body, [class*="css"]  {
+        background-color: #1a1a1a;
+        color: #f4f4f4;
+        font-family: 'Fira Code', monospace;
     }
     .stTextInput input {
-        background-color: #1c1e26;
-        color: #f5f5f5;
+        background-color: #2d2d2d;
+        color: #fff;
+        border: 1px solid #555;
+        border-radius: 8px;
     }
-    .stChatMessage { 
-        border-radius: 12px; 
-        padding: 10px; 
-        margin-bottom: 10px;
+    .stChatMessage {
+        border-radius: 10px;
+        padding: 10px;
+        margin: 10px 0;
     }
     .stChatMessage.user {
-        background-color: #1f77b4;
-        color: white;
+        background: linear-gradient(to right, #444, #666);
+        color: #fff;
     }
     .stChatMessage.assistant {
-        background-color: #e74c3c;
-        color: white;
+        background: linear-gradient(to right, #e74c3c, #c0392b);
+        color: #fff;
     }
-    .block-container {
-        padding-top: 2rem;
+    .stButton>button {
+        background-color: #c0392b;
+        color: white;
+        border: none;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+    }
+    .stSelectbox div, .stTextInput label {
+        color: #bbb;
+    }
+    h1 {
+        color: #ff6b6b;
     }
 </style>
 """
@@ -47,7 +59,7 @@ api_key = st.text_input("🔑 Enter your OpenAI API key", type="password")
 model = st.selectbox("🤖 Choose a model", ["gpt-4", "gpt-3.5-turbo"])
 
 if api_key:
-    openai.api_key = api_key
+    client = openai.OpenAI(api_key=api_key)
 
     if "messages" not in st.session_state:
         st.session_state.messages = [
@@ -68,7 +80,7 @@ if api_key:
         with st.chat_message("assistant"):
             with st.spinner("Mixing up some hot takes..."):
                 try:
-                    response = openai.ChatCompletion.create(
+                    response = client.chat.completions.create(
                         model=model,
                         messages=st.session_state.messages,
                         temperature=0.95
